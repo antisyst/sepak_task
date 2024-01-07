@@ -1,0 +1,214 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --color-white: #ffff;
+  --color-black: #000;
+  --color-prim: #121212d4;
+  --color-main: #0072f5;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+body {
+  font-family: 'General Sans', sans-serif;
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: 5vh 4%;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  @media only screen and (max-width: 600px)  {
+    align-items: center;
+  }
+}
+.stock_container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+.searched_container {
+  margin-top: 20px;
+}
+.stock_card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  height: 350px;
+  position: relative;
+  padding: 20px;
+  border: 1.7px solid var(--color-prim);
+  width: 370px;
+  border-radius: 30px;
+  background: var(--color-prim);
+
+  &:hover {
+    border: 1.7px solid var(--color-main);
+  }
+
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+  }
+}
+.chart_item {
+  width: 100%;
+  filter: drop-shadow(0 0 0.75rem var(--color-main));
+  height: auto;
+}
+.first_content {
+  margin: 10px 0;
+}
+.apexcharts-tooltip-series-group {
+  background: var(--color-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.apexcharts-tooltip-marker {
+  display: none;
+}
+.apexcharts-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+.apexcharts-xaxis-tick {
+  display: none;
+}
+
+
+.apexcharts-theme-light {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.apexcharts-xaxistooltip {
+  display: none;
+}
+.apexcharts-tooltip-text-y-label {
+  display: none;
+}
+.search_field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1.7px solid var(--color-main);
+  justify-content: space-between;
+  height: 50px;
+  border-radius: 30px;
+  width: 400px;
+  padding-left: 15px;
+
+
+  input {
+    outline: none;
+    font-size: 17px;
+    width: 100%;
+    color: var(--color-white);
+    background: transparent;
+    border: none;
+  }
+  
+  button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    display: flex;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    justify-content: center;
+    height: 50px;
+    width: 60px;
+    align-items: center;
+    font-size: 25px;
+    color: var(--color-white);
+    background: var(--color-main);
+    padding: 5px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+  }
+}
+
+.hist_button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  background: var(--color-main);
+  font-weight: 500;
+  color: var(--color-white);
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+.change_percent {
+  font-weight: 500;
+
+  span {
+    color: var(--color-main);
+  }
+}
+.historical_section {
+  position: absolute;
+  right: 0;
+  border-radius: 30px;
+  top: 360px;
+  border: 1.7px solid var(--color-main);
+  backdrop-filter: blur(10px);
+  background: var(--color-prim);
+}
+.historical_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0 14px;
+  height: 400px;
+  justify-content: space-between;
+  padding: 20px;
+
+  p {
+    font-weight: 500;
+
+    span {
+      color: var(--color-main);
+    }
+  }
+}
+.loader {
+  width: 45px;
+  height: 45px;
+  border: 3px solid var(--color-main);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 40px;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 
