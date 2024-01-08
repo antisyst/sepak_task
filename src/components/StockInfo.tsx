@@ -1,7 +1,7 @@
 import React from 'react';
 import { StockInfoProps } from '../types/StockTypes';
 
-const StockInfo: React.FC<StockInfoProps> = ({ stock }) => {
+const StockInfo: React.FC<StockInfoProps> = React.memo(({ stock }) => {
   return (
     <div className='chart_info'>
       {stock ? (
@@ -15,6 +15,6 @@ const StockInfo: React.FC<StockInfoProps> = ({ stock }) => {
       )}
     </div>
   );
-};
+});
 
 export default StockInfo;

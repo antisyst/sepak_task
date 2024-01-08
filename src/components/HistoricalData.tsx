@@ -6,7 +6,7 @@ interface HistoricalDataProps {
   symbol: string;
 }
 
-const HistoricalData: React.FC<HistoricalDataProps> = ({ symbol }) => {
+const HistoricalData: React.FC<HistoricalDataProps> = React.memo(({ symbol }) => {
   const [historicalData, setHistoricalData] = useState<StockChartData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +42,6 @@ const HistoricalData: React.FC<HistoricalDataProps> = ({ symbol }) => {
       )}
     </div>
   );
-};
+})
 
 export default HistoricalData;

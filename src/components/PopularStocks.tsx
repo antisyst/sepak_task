@@ -31,22 +31,22 @@ const PopularStocks: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <Loader/>;
+    return <Loader />;
   }
 
   return (
     <div>
       {popularStocksData.length > 0 && (
-            <Tooltip id="popular-stocks-tooltip" content="These are popular stocks. Click on a stock to see detailed information.">
+        <Tooltip id="popular-stocks-tooltip" content="These are popular stocks. Click on a stock to see detailed information.">
           <div className='stock_container'>
             {popularStocksData.map((stock) => (
-              <div className='stock_card'>
+              <div key={stock.symbol} className='stock_card'>
                 <StockInfo stock={stock} />
                 <StockChart symbol={stock.symbol} />
               </div>
             ))}
           </div>
-          </Tooltip>
+        </Tooltip>
       )}
     </div>
   );

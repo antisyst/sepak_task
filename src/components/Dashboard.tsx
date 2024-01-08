@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import StockSearch from './StockSearch';
 import PopularStocks from './PopularStocks';
 import StockChart from './StockChart';
 import StockInfo from './StockInfo';
-import { fetchStockData, fetchStockChartData } from '../services/StockService';
-import { DashboardProps, Stock, StockChartData } from '../types/StockTypes';
 import Tooltip from './Tooltip';
+import ErrorBoundary from './ErrorBoundary';
 import HistoricalData from './HistoricalData';
 import Loader from './Loader';
+import { fetchStockData, fetchStockChartData } from '../services/StockService';
+import { DashboardProps, Stock, StockChartData } from '../types/StockTypes';
 
 const Dashboard: React.FC<DashboardProps> = () => {
   const [searchedStockSymbol, setSearchedStockSymbol] = useState<string | null>(null);
@@ -22,11 +23,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
       if (searchedStockSymbol) {
         try {
           setLoading(true);
-
+  
           const data = await fetchStockData(searchedStockSymbol);
           setSearchedStockData(data);
           setError(null);
-
+  
           if (showHistoricalData) {
             const historyData = await fetchStockChartData(searchedStockSymbol);
             setHistoricalData(historyData);
@@ -39,47 +40,59 @@ const Dashboard: React.FC<DashboardProps> = () => {
         }
       }
     };
-
+  
     fetchSearchedStockData();
-  }, [searchedStockSymbol, showHistoricalData]);
+  }, [searchedStockSymbol, showHistoricalData ]);
+  
 
-  const handleSearch = (symbol: string) => {
+  const handleSearch = useCallback((symbol: string) => {
     setSearchedStockSymbol(symbol);
     setSearchedStockData(null);
     setHistoricalData([]);
     setShowHistoricalData(false);
-  };
+  }, []);
 
-  const handleToggleHistoricalData = () => {
-    setShowHistoricalData(!showHistoricalData);
-  };
+  const handleToggleHistoricalData = useCallback(() => {
+    setShowHistoricalData((prevShow) => !prevShow);
+  }, []);
+
+  const memoizedStockChart = useMemo(() => {
+    if (searchedStockSymbol) {
+      return <StockChart symbol={searchedStockSymbol} historicalData={historicalData} />;
+    }
+    return null;
+  }, [searchedStockSymbol, historicalData]);
+
+  const memoizedHistoricalData = useMemo(() => (
+    showHistoricalData && searchedStockSymbol && <HistoricalData symbol={searchedStockSymbol} />
+  ), [showHistoricalData, searchedStockSymbol]);
 
   return (
     <div>
       <h1 className='first_content'>Financial Dashboard</h1>
       <StockSearch onSearch={handleSearch} />
       {loading ? (
-        <Loader/>
+        <Loader />
       ) : error ? (
         <p>{error}</p>
       ) : (
         <div>
           {searchedStockSymbol && searchedStockData && (
             <div className='stock_container'>
-              <Tooltip id="dashboard-tooltip" content="This is your financial dashboard. Enter a stock symbol to see detailed information.">
-                <div className='stock_card'>
-                  <div>
-                    <StockChart symbol={searchedStockSymbol} historicalData={historicalData} />
+              <ErrorBoundary>
+                <Tooltip id="dashboard-tooltip" content="This is your financial dashboard. Enter a stock symbol to see detailed information.">
+                  <div className='stock_card'>
+                    <div>{memoizedStockChart}</div>
+                    <div>
+                      <StockInfo stock={searchedStockData} />
+                      <button onClick={handleToggleHistoricalData} className='hist_button'>
+                        {showHistoricalData ? 'Hide Historical Data' : 'Show Historical Data'}
+                      </button>
+                      {memoizedHistoricalData}
+                    </div>
                   </div>
-                  <div>
-                    <StockInfo stock={searchedStockData} />
-                    <button onClick={handleToggleHistoricalData} className='hist_button'>
-                      {showHistoricalData ? 'Hide Historical Data' : 'Show Historical Data'}
-                    </button>
-                    {showHistoricalData && <HistoricalData symbol={searchedStockSymbol} />}
-                  </div>
-                </div>
-              </Tooltip>
+                </Tooltip>
+              </ErrorBoundary>
             </div>
           )}
           {!searchedStockSymbol && <PopularStocks />}

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ApexCharts from 'react-apexcharts';
 import { fetchStockChartData } from '../services/StockService';
 import { StockChartProps, StockChartData } from '../types/StockTypes';
 import { ApexOptions } from 'apexcharts';
 
-const StockChart: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
+const StockChartComponent: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
   const [chartData, setChartData] = useState<StockChartData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,13 +13,11 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
       try {
         setLoading(true);
 
-        if (historicalData && historicalData.length > 0) {
-          setChartData(historicalData);
-        } else {
-          const data = await fetchStockChartData(symbol);
-          setChartData(data);
-        }
+        const data = historicalData && historicalData.length > 0
+          ? historicalData
+          : await fetchStockChartData(symbol);
 
+        setChartData(data);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -29,6 +27,10 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
 
     fetchChartData();
   }, [symbol, historicalData]);
+
+  const seriesData = useMemo(() => (
+    chartData.map((point) => [new Date(point.date).getTime(), point.value])
+  ), [chartData]);
 
   const options: ApexOptions = {
     chart: {
@@ -109,12 +111,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
       ) : (
         <ApexCharts
           options={options}
-          series={[
-            {
-              name: symbol,
-              data: chartData.map((point) => [new Date(point.date).getTime(), point.value]),
-            },
-          ]}
+          series={[{ name: symbol, data: seriesData }]}
           type="line"
           className='chart_item'
         />
@@ -122,5 +119,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, historicalData }) => {
     </div>
   );
 };
+
+const StockChart = React.memo(StockChartComponent);
 
 export default StockChart;
